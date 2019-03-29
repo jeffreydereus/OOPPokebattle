@@ -9,6 +9,7 @@ class Pokemon
     public $Weakness;
     public $Resistance;
 
+
     public function __construct($Name, $EnergyType, $Hitpoints, $Attacks, $Weakness, $Resistance)
     {
         $this->Name = $Name;
@@ -26,4 +27,29 @@ class Pokemon
     {
         return json_encode($this);
     }
+
+    public function attack($Attacker, $attackName, $Damage, $target){
+        $chosenAttack = $attackName;
+        $enemyType = $target->energyType;
+        $damage = $Damage;
+        foreach($target->Resistance as $resist){
+            if($Attacker->EnergyType == $resist->TypeName){
+                $damage = $damage - $resist->points;
+                var_dump("first ".$damage);
+            }
+        }
+        foreach($target->Weakness as $weak){
+            if($Attacker->EnergyType == $weak->TypeName){
+                $damage = $damage * $weak->multiplier;
+                var_dump("second ".$damage);
+            }
+        }
+        $target->takeDamage($damage, $target);
+    }
+
+    public function takeDamage($damagePoints, $target){
+        $target->Hitpoints = $target->Hitpoints - $damagePoints;
+        echo "current health of ".$target->Name." = ".$target->Hitpoints."<br><br>";
+    }
+
 }
